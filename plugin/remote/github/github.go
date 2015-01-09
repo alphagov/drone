@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/drone/drone/plugin/remote/github/oauth"
+	"github.com/drone/drone/shared/build/log"
 	"github.com/drone/drone/shared/httputil"
 	"github.com/drone/drone/shared/model"
 	"github.com/drone/go-github/github"
@@ -72,6 +73,7 @@ func (r *GitHub) Authorize(res http.ResponseWriter, req *http.Request) (*model.L
 	if len(code) == 0 {
 		var random = GetRandom()
 		httputil.SetCookie(res, req, "github_state", random)
+		log.Debugf("Got zero-length Oauth code")
 		http.Redirect(res, req, config.AuthCodeURL(random), http.StatusSeeOther)
 		return nil, nil
 	}
@@ -113,6 +115,7 @@ func (r *GitHub) Authorize(res http.ResponseWriter, req *http.Request) (*model.L
 		login.Name = *useremail.Name
 	}
 
+	log.Debugf("Got Oauth code from GitHub %q for user %+v. Access token is: %q", code, useremail, login.Access)
 	return login, nil
 }
 
