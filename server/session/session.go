@@ -9,6 +9,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/drone/config"
 	"github.com/drone/drone/server/datastore"
+	"github.com/drone/drone/shared/build/log"
 	"github.com/drone/drone/shared/httputil"
 	"github.com/drone/drone/shared/model"
 	"github.com/gorilla/securecookie"
@@ -27,14 +28,21 @@ var (
 // http.Request. The user details will be stored as either
 // a simple API token or JWT bearer token.
 func GetUser(c context.Context, r *http.Request) *model.User {
+	var user *model.User
+
 	switch {
 	case r.Header.Get("Authorization") != "":
-		return getUserBearer(c, r)
+		log.Debugf("Got Authorization request header: %q", r.Header.Get("Authorization"))
+		user = getUserBearer(c, r)
 	case r.FormValue("access_token") != "":
-		return getUserToken(c, r)
+		log.Debugf("Got access_token form value: %q", r.FormValue("access_token"))
+		user = getUserToken(c, r)
 	default:
-		return nil
+		user = nil
 	}
+
+	log.Debugf("GetUser() returning user: %+v", user)
+	return user
 }
 
 // GenerateToken generates a JWT token for the user session
@@ -57,6 +65,7 @@ func getUserToken(c context.Context, r *http.Request) *model.User {
 		return user
 	}
 	user, _ = datastore.GetUserToken(c, token)
+	log.Debugf("Found user using access_token: %+v", user)
 	return user
 }
 
@@ -82,5 +91,6 @@ func getUserJWT(c context.Context, token string) *model.User {
 		return nil
 	}
 	var user, _ = datastore.GetUser(c, int64(userid))
+	log.Debugf("Found user using JWT token in Authorization header: %+v", user)
 	return user
 }

@@ -75,7 +75,7 @@ var (
 )
 
 func main() {
-	log.SetPriority(log.LOG_NOTICE)
+	log.SetPriority(log.LOG_DEBUG)
 
 	// Parses flags. The only flag that can be passed into the
 	// application is the location of the configuration (.toml) file.
