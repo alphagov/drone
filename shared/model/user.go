@@ -2,6 +2,7 @@ package model
 
 import (
 	"time"
+	"strings"
 )
 
 type User struct {
@@ -48,6 +49,24 @@ func (u *User) IsStale() bool {
 	default:
 		return false
 	}
+}
+
+func (u *User) Debug() User {
+	obfUser := *u
+	obfUser.Access = Obfuscate(obfUser.Access)
+	obfUser.Token = Obfuscate(obfUser.Token)
+	obfUser.Secret = Obfuscate(obfUser.Secret)
+
+	return obfUser
+}
+
+func Obfuscate(value string) string {
+	keep := len(value) / 4
+	if keep < 1 {
+		return value
+	}
+
+	return value[:keep] + strings.Repeat("*", len(value) - keep)
 }
 
 // by default, let's expire the user

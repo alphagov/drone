@@ -41,7 +41,9 @@ func GetUser(c context.Context, r *http.Request) *model.User {
 		user = nil
 	}
 
-	log.Debugf("GetUser() returning user: %+v", user)
+	if user != nil {
+		log.Debugf("GetUser() returning user: %+v", user.Debug())
+	}
 	return user
 }
 
@@ -65,7 +67,9 @@ func getUserToken(c context.Context, r *http.Request) *model.User {
 		return user
 	}
 	user, _ = datastore.GetUserToken(c, token)
-	log.Debugf("Found user using access_token: %+v", user)
+	if user != nil {
+		log.Debugf("Found user using access_token: %+v", user.Debug())
+	}
 	return user
 }
 
@@ -91,6 +95,8 @@ func getUserJWT(c context.Context, token string) *model.User {
 		return nil
 	}
 	var user, _ = datastore.GetUser(c, int64(userid))
-	log.Debugf("Found user using JWT token in Authorization header: %+v", user)
+	if user != nil {
+		log.Debugf("Found user using JWT token in Authorization header: %+v", user.Debug())
+	}
 	return user
 }
