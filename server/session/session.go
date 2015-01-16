@@ -32,10 +32,10 @@ func GetUser(c context.Context, r *http.Request) *model.User {
 
 	switch {
 	case r.Header.Get("Authorization") != "":
-		log.Debugf("Got Authorization request header: %q", r.Header.Get("Authorization"))
+		log.Debugf("Got Authorization request header: %q", model.Obfuscate(r.Header.Get("Authorization")))
 		user = getUserBearer(c, r)
 	case r.FormValue("access_token") != "":
-		log.Debugf("Got access_token form value: %q", r.FormValue("access_token"))
+		log.Debugf("Got access_token form value: %q", model.Obfuscate(r.FormValue("access_token")))
 		user = getUserToken(c, r)
 	default:
 		user = nil
