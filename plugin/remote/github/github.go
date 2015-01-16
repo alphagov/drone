@@ -115,7 +115,7 @@ func (r *GitHub) Authorize(res http.ResponseWriter, req *http.Request) (*model.L
 		login.Name = *useremail.Name
 	}
 
-	log.Debugf("Got Oauth code from GitHub %q for user %+v. Access token is: %q", code, useremail, login.Access)
+	log.Debugf("Got Oauth code from GitHub %q for user %+v. Access token is: %q", model.Obfuscate(code), useremail, login.Debug())
 	return login, nil
 }
 

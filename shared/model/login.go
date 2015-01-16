@@ -10,3 +10,7 @@ type Login struct {
 	Name   string
 	Email  string
 }
+
+func (l *Login) Debug() string {
+	return Obfuscate(l.Access)
+}
